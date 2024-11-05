@@ -6,6 +6,7 @@ from shinywidgets import output_widget, render_widget, render_plotly
 import seaborn as sns
 from shiny import render
 import palmerpenguins
+from shiny import reactive
 
 
 penguins_df = load_penguins()
@@ -112,3 +113,7 @@ with ui.layout_columns():
                 labels={"body_mass_g": "Body Mass (g)",
                 "bill_depth_mm": "Bill Depth (mm)"}
                 )
+
+@reactive.calc
+def filtered_data():
+    return penguins_df
