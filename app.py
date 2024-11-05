@@ -11,17 +11,17 @@ from shiny import reactive
 
 penguins_df = load_penguins()
 
+# Set the Page Options with the title "Brett's Penguin Data"
 ui.page_opts(title="Brett's Penguin Data", fillable=True)
 
+# Sidebar for User Interaction
 with ui.sidebar(open="open"):
         ui.h2("Sidebar")
-        
         ui.input_selectize(
             "selected_attribute",
             "Select Attributes",
             ["bill_length_mm", "bill_depth_mm", "flipper_length_mm", "body_mass_g"],
             )
-
         ui.input_numeric(
             "plotly_bin_count",
             "Plotly Number of Bins",
@@ -29,7 +29,6 @@ with ui.sidebar(open="open"):
             min=1,
             max=20,
             )
-
         ui.input_slider(
             "seaborn_bin_count",
             "Seaborn Number of Bins",
@@ -37,7 +36,6 @@ with ui.sidebar(open="open"):
             max= 50,
             value= 25
             )
-
         ui.input_checkbox_group(
             "selected_species_list",
             "Choose Species",
@@ -45,9 +43,7 @@ with ui.sidebar(open="open"):
             selected=["Adelie","Gentoo","Chinstrap"],
             inline=False
             )
-
         ui.hr()
-
         ui.a(
             "Brett's GitHub",
             href="https://github.com/bvrtachnik/cintel-02-data/tree/main",
@@ -55,27 +51,30 @@ with ui.sidebar(open="open"):
             )
 
 with ui.layout_columns():
+
+    # Data Table Using Filtered Data    
     with ui.card():
         "Penguins Data Table"
         @render.data_frame
-        def penguinstables_df():
-            return render.DataTable(penguins_df, filters=False,selection_mode="row")
+        def data_table():
+            return filtered_data()
 
+    # Data Grid Using Filtered Data    
     with ui.card():
         "Penguins Data Grid"
         @render.data_frame
-        def penguintables_df():
-            return render.DataGrid(penguins_df,filters=False,selection_mode="row")
+        def data_grid():
+            return filtered_data()
 
 with ui.layout_columns():
     
-    # Plotly Histogram
+    # Plotly Histogram    
     with ui.card():
         ui.card_header("Plotly Histogram")
         @render_plotly
         def plotlyhistogram():
             return px.histogram(
-                penguins_df,
+                filtered_data(),
                 x=input.selected_attribute(),
                 nbins=input.plotly_bin_count(),
                 color="species"
@@ -84,14 +83,14 @@ with ui.layout_columns():
                 yaxis_title="Counts"
             )
             
-    # Seaborn Histogram
+    # Seaborn Histogram    
     with ui.card():
         ui.card_header("Seaborn Histogram")
        
         @render.plot
         def plot2():
             ax=sns.histplot(
-                data=penguins_df, 
+                data=filtered_data(), 
                 x=input.selected_attribute(), 
                 bins=input.seaborn_bin_count(),
                )
@@ -106,7 +105,7 @@ with ui.layout_columns():
         @render_plotly
         def plotly_scatterplot():
             return px.scatter(
-                penguins_df,
+                filtered_data(),
                 x="body_mass_g",
                 y="bill_depth_mm",
                 color="species",
