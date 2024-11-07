@@ -57,14 +57,14 @@ with ui.layout_columns():
         "Penguins Data Table"
         @render.data_frame
         def data_table():
-            return filtered_data()
+            return render.DataTable(filtered_data())
 
     # Data Grid Using Filtered Data    
     with ui.card():
         "Penguins Data Grid"
         @render.data_frame
         def data_grid():
-            return filtered_data()
+            return render.DataGrid(filtered_data())
 
 with ui.layout_columns():
     
@@ -125,4 +125,7 @@ with ui.layout_columns():
 
 @reactive.calc
 def filtered_data():
+    selected_species = input.selected_species_list()
+    if selected_species:
+        return penguins_df[penguins_df['species'].isin(selected_species)]
     return penguins_df
