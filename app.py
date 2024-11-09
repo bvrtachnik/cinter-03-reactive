@@ -86,7 +86,6 @@ with ui.layout_columns():
     # Seaborn Histogram    
     with ui.card():
         ui.card_header("Seaborn Histogram")
-       
         @render.plot
         def plot2():
             ax=sns.histplot(
